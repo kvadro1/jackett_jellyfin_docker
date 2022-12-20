@@ -1,0 +1,84 @@
+version: '2'
+services:
+
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./sonarr:/config
+      - ./downloads/serials:/serials
+      - ./downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: always
+
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./radarr:/config
+      - ./downloads/movies:/movies
+      - ./downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: always
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - WEBUI_PORT=8068
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./qbittorrent:/config
+      - ./downloads:/downloads
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 8068:8068
+    restart: always
+
+  jackett:
+    image: linuxserver/jackett
+    container_name: jackett
+    environment:
+      #      - RUN_OPTS=--ProxyConnection=torproxy:8118
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Moscow
+    volumes:
+      - ./jackett:/config
+      - ./downloads:/downloads
+    ports:
+      - 9117:9117
+    restart: always
+
+  jellyfin:
+    container_name: jellyfin
+    image: linuxserver/jellyfin
+    restart: always
+    ports:
+      - "8097:8096"
+      - "8921:8920"
+    volumes:
+      - ./downloads/movies:/MOVIES
+      - ./downloads/tv:/TVSHOWS
+      - ./downloads/serials:/SERIALS
+      - ./downloads/concerts:/CONCERTS
+      - ./jellyfin:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Moscow
+      - UMASK_SET=022
+
+networks:
+  network:
+    driver: bridge
