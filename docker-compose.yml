@@ -49,7 +49,6 @@ services:
     image: linuxserver/jackett
     container_name: jackett
     environment:
-      #      - RUN_OPTS=--ProxyConnection=torproxy:8118
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Moscow
